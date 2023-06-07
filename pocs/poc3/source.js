@@ -7,7 +7,7 @@ function express() {
     let length = middlewares.length
     const next = () => {
       if(mdwIndex < length)  
-        middlewares[mdwIndex++](res, req, next) // 执行下一个middleware
+        middlewares[mdwIndex++](res, req, next) // 执行middleware
       else 
         core() // 执行洋葱的最里面
     }
