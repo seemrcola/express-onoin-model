@@ -98,7 +98,7 @@ function express() {
     next()
   }
 
-  function listen(host, port, core) {
+  function listen(port, core) {
     let res = {}
     let req = {}
     handle(res, req, core)
@@ -121,6 +121,130 @@ module.exports = express
 简单来说就是用next再包一层，清晰化语义。
 
 #### 3. express路由
+实际上express的路由也是中间件，只不过是在中间件中做了一层判断，如果匹配到了路由，就执行路由的回调，否则就执行next。  
+基于这个思路，我们也做个处理。  
+测试代码在poc4，我们可以调整中间件use的位置，来观察打印的情况。  
+测试方式
+1. node express.js
+2. 查看控制台
+3. 访问localhost:3000
+4. 查看控制台
+```js
+// 基于poc1版本，实现可以通过express调用的方式来产生app
 
+const RESTFUL_METHODS = ['get', 'post', 'put', 'delete', 'options', 'head', 'patch']
+
+function express() {
+  const app = {}
+
+  const middlewares = []
+
+  function use(fn) {
+    mountMiddleware( path = undefined, fn )
+  }
+
+  function handle(res, req, core) {
+    let mdwIndex = 0
+    let length = middlewares.length
+    const next = () => {
+      if(mdwIndex < length)  
+        middlewares[mdwIndex++].fn(res, req, next) // 执行middleware
+      else 
+        core() // 执行洋葱的最里面
+    }
+    next()
+  }
+
+  function mountMiddleware(path, fn) {
+    // 由于我们要顺便把path放进去，所以我们需要一个对象来存储
+    middlewares.push({path, fn})
+  }
+
+  // 既然路由也是中间件，那我们在调用路由的时候就执行挂载
+  RESTFUL_METHODS.forEach(method => {
+    app[method] = (path, fn) => {
+      mountMiddleware(path, fn)
+    }
+  })
+
+  function listen(host, port, core) {
+    let res = {}
+    let req = {}
+    handle(res, req, core)
+  }
+
+  app.use = use
+  app.listen = listen
+  return app
+}
+
+module.exports = express
+```
+我们将restful的方法挂载到app上，然后在调用的时候，就执行挂载。  
+但是我们poc4还无法真正跑起来，因为我们并没有实现一个http服务，所以我们需要引入http模块来实现一个http服务。  
+```js
+const http = require('http')
+
+const RESTFUL_METHODS = ['get', 'post', 'put', 'delete']
+
+function express() {
+  const app = {}
+  const middlewares = []
+
+  function use(fn) {
+    mountMiddleware(null, null, fn)
+  }
+
+  RESTFUL_METHODS.forEach(method => {
+    app[method] = (path, fn) => {
+      mountMiddleware(path, method, fn)
+    }
+  })
+
+  function mountMiddleware(path, method, fn) {
+    middlewares.push({ path, method, fn })
+  }
+
+  function handle(req, res, core) {
+    let mdwIndex = 0
+    let length = middlewares.length
+    const next = () => {
+      const { path, method, fn } = middlewares[mdwIndex++]
+      const income_method = req.method.toLowerCase()
+      const income_path = req.url
+
+      if(mdwIndex < length) {
+        if(path === null || (path === income_path && method === income_method)) 
+          fn(req, res, next)
+        else 
+          next() // 跳过当前中间件
+      } 
+      else {
+        core() // 执行洋葱的最里面
+      }
+        
+    }
+    next()
+  }
+
+  function listen(port, fn) {
+    http.createServer((req, res) => {
+      handle(req, res, () => {
+        res.end('404')
+      })
+    }).listen(port, () => {
+      fn && fn() // 启动成功后的回调
+    })
+  }
+
+  app.use = use
+  app.listen = listen
+
+  return app
+}
+
+module.exports = express
+```
+!!当前src下的代码还停留在router之前，后续会补上。
 
 
