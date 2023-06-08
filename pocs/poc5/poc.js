@@ -16,6 +16,21 @@ const logger = (res, req, next) => {
   console.log('second middleware end', res.log)
 }
 
+// app.get('/user',(req,res,next)=>{
+//   console.log('user route start')
+// 	res.end('get /user')
+//   console.log('user route end')
+// })
+
+// app.post('/user',(req,res,next)=>{
+//   console.log('user route start')
+// 	res.end('post /user')
+//   console.log('user route end')
+// })
+
+app.use(requestTime)
+app.use(logger)
+
 app.get('/user',(req,res,next)=>{
   console.log('user route start')
 	res.end('get /user')
@@ -28,7 +43,4 @@ app.post('/user',(req,res,next)=>{
   console.log('user route end')
 })
 
-app.use(requestTime)
-app.use(logger)
-
-app.listen(3000)
+app.listen(3009)
