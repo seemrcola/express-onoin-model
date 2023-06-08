@@ -20,7 +20,7 @@ class Express {
     next()
   }
 
-  listen(host, port, core) {
+  listen(port, core) {
     let res = {}
     let req = {}
     this.handle(req, res, core)
