@@ -246,7 +246,8 @@ function express() {
 
 module.exports = express
 ```
-!!当前src下的代码还停留在router之前，后续会补上。
-!!一些代码还需要debug，后续会补上。
+在这个poc5的代码里也增加了对异步中间件的判断，当前express在异步中间件的情况下会存在问题。  
+我们即使加上async await的支持，也无法在当前基础上实现异步中间件的支持。这里就是promise相关的执行顺序问题了。  
+
 
 
