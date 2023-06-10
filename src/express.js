@@ -1,3 +1,6 @@
+// 这是一个使用链表实现的简单的 express 框架
+// 链表的性能会比数组差，因为append的时候需要遍历链表
+
 const http = require('http')
 
 const Linklist = require('./linklist.js')
