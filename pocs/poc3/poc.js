@@ -21,7 +21,7 @@ app.use(requestTime)
 app.use(logger)
 
 // 启动
-app.listen('localhost', 3000, () => {
+app.listen(3000, () => {
   console.log('--core--')
 })
 
