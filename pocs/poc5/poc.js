@@ -1,32 +1,28 @@
 const express = require('./source.js')
+const axios = require('axios')
 
 const app = express()
 // 时间中间件
-const requestTime = (res, req, next) => {
+const requestTime = (req, res, next) => {
   console.log('first middleware start')
   res.time = Date.now()
   next()
   console.log('first middleware end', res.time)
 }
 // 信息中间件
-const logger = async (res, req, next) => {
+const logger = async (req, res, next) => {
   console.log('second middleware start')
   res.log = 'logger'
   await next()
   console.log('second middleware end', res.log)
 }
 // 异步中间件
-// const asyncMiddleware = async (res, req, next) => {
-//   console.log('async middleware start')
-//   await new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       res.sync = 'async middleware result'
-//       resolve()
-//     }, 1000)
-//   })
-//   next()
-//   console.log('async middleware end')
-// }
+const asyncMiddleware = async (req, res, next) => {
+  console.log('async middleware start')
+  await axios.get('https://www.baidu.com')
+  next()
+  console.log('async middleware end')
+}
 
 // app.get('/user',(req,res,next)=>{
 //   console.log('user route start')
@@ -42,7 +38,7 @@ const logger = async (res, req, next) => {
 
 app.use(requestTime)
 app.use(logger)
-// app.use(asyncMiddleware)
+app.use(asyncMiddleware)
 
 app.get('/user',(req,res,next)=>{
   console.log('user route start', res.sync)
@@ -56,4 +52,4 @@ app.post('/user',(req,res,next)=>{
   console.log('user route end')
 })
 
-app.listen(3009)
+app.listen(3088)

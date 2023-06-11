@@ -1,45 +1,55 @@
-const express = require('express')
-const app = express()
-const port = 5000
+const express = require('./source.js')
+const axios = require('axios')
 
-// poc1部分的实现核心--------------------------------------------
+const app = express()
 // 时间中间件
-const requestTime = (req, res, next) => {
-  req.requestTime = Date.now()
+const requestTime = (res, req, next) => {
   console.log('first middleware start')
+  res.time = Date.now()
   next()
-  console.log('first middleware end')
+  console.log('first middleware end', res.time)
 }
 // 信息中间件
-const logger = (req, res, next) => {
-  req.log = 'logger'
+const logger = async (res, req, next) => {
   console.log('second middleware start')
-  next()
-  console.log('second middleware end')
+  res.log = 'logger'
+  await next()
+  console.log('second middleware end', res.log)
 }
+// 异步中间件
+// const asyncMiddleware = async (res, req, next) => {
+//   console.log('async middleware start')
+//   await axios.get('https://www.baidu.com')
+//   next()
+//   console.log('async middleware end')
+// }
 
-// 搞几个路由
-app.get('/', (req, res, next) => {
-  console.log('test route start')
-  next() 
-  console.log('test route end')
-})
+// app.get('/user',(req,res,next)=>{
+//   console.log('user route start')
+// 	res.end('get /user')
+//   console.log('user route end')
+// })
 
-app.get('/', (req, res, next) => {
-  console.log('test route start')
-  res.end('Hello World!')
-  console.log('test route end')
-})
+// app.post('/user',(req,res,next)=>{
+//   console.log('user route start')
+// 	res.end('post /user')
+//   console.log('user route end')
+// })
 
-// 使用中间件(在路由之后使用中间件)
 app.use(requestTime)
 app.use(logger)
-// poc1部分的实现核心----------------------------------------------
+// app.use(asyncMiddleware)
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get('/user',(req,res,next)=>{
+  console.log('user route start', res.sync)
+	res.end('get /user')
+  console.log('user route end')
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.post('/user',(req,res,next)=>{
+  console.log('user route start', res.sync)
+	res.end('post /user')
+  console.log('user route end')
 })
+
+app.listen(3008)

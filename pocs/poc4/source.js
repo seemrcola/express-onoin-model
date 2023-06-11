@@ -11,12 +11,12 @@ function express() {
     mountMiddleware( path = undefined, fn )
   }
 
-  function handle(res, req, core) {
+  function handle(req, res, core) {
     let mdwIndex = 0
     let length = middlewares.length
     const next = () => {
       if(mdwIndex < length)  
-        middlewares[mdwIndex++].fn(res, req, next) // 执行middleware
+        middlewares[mdwIndex++].fn(req, res, next) // 执行middleware
       else 
         core() // 执行洋葱的最里面
     }
@@ -38,7 +38,7 @@ function express() {
   function listen(port, core) {
     let res = {}
     let req = {}
-    handle(res, req, core)
+    handle(req, res, core)
   }
 
   app.use = use

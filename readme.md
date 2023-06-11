@@ -248,6 +248,25 @@ module.exports = express
 ```
 在这个poc5的代码里也增加了对异步中间件的判断，当前express在异步中间件的情况下会存在问题。  
 我们即使加上async await的支持，也无法在当前基础上实现异步中间件的支持。这里就是promise相关的执行顺序问题了。  
+由于这个执行顺序确实非常乱，而且感觉不好分析（我也不知道为什么是这个执行顺序），所以我写了一个类似情况再poc/other里面。  
 
+另外，koa是支持异步中间件的，但是koa的实现方式和express不一样。 如下是koa的简单实现
+```js
+// koa中间价的实现
+function compose(middlewares) {
+  return function(ctx) { // koa将req和res封装成了ctx
+    return dispatch(0) // 从第一个中间件开始执行
+    function dispatch(i) {
+      let fn = middlewares[i]
+      if(!fn) return Promise.resolve() // 如果没有中间件了，就返回一个空的promise
+      return Promise.resolve( // 将中间件的执行结果包装成promise
+        fn(ctx, function next() {
+          return dispatch(i + 1)
+        })
+      )
+    }
+  }
+}
+```
 
 
