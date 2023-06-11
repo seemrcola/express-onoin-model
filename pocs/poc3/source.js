@@ -17,7 +17,7 @@ function express() {
   function listen(port, core) {
     let res = {} // 先随便写一个res
     let req = {} // 先随便写一个req
-    handle(res, req, core)
+    handle(req, res, core)
   }
 
   function use(fn) {
