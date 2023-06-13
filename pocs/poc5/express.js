@@ -1,4 +1,4 @@
-const express = require('./source.js')
+const express = require('express')
 const axios = require('axios')
 
 const app = express()
@@ -24,32 +24,32 @@ const logger = async (res, req, next) => {
 //   console.log('async middleware end')
 // }
 
-// app.get('/user',(req,res,next)=>{
-//   console.log('user route start')
-// 	res.end('get /user')
-//   console.log('user route end')
-// })
-
-// app.post('/user',(req,res,next)=>{
-//   console.log('user route start')
-// 	res.end('post /user')
-//   console.log('user route end')
-// })
-
-app.use(requestTime)
-app.use(logger)
-// app.use(asyncMiddleware)
-
 app.get('/user',(req,res,next)=>{
-  console.log('user route start', res.sync)
+  console.log('user route start')
 	res.end('get /user')
   console.log('user route end')
 })
 
 app.post('/user',(req,res,next)=>{
-  console.log('user route start', res.sync)
+  console.log('user route start')
 	res.end('post /user')
   console.log('user route end')
 })
 
-app.listen(3008)
+app.use(requestTime)
+app.use(logger)
+// app.use(asyncMiddleware)
+
+// app.get('/user',(req,res,next)=>{
+//   console.log('user route start', res.sync)
+// 	res.end('get /user')
+//   console.log('user route end')
+// })
+
+// app.post('/user',(req,res,next)=>{
+//   console.log('user route start', res.sync)
+// 	res.end('post /user')
+//   console.log('user route end')
+// })
+
+app.listen(30080)

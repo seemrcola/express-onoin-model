@@ -17,39 +17,41 @@ const logger = async (req, res, next) => {
   console.log('second middleware end', res.log)
 }
 // 异步中间件
-const asyncMiddleware = async (req, res, next) => {
-  console.log('async middleware start')
-  await axios.get('https://www.baidu.com')
-  next()
-  console.log('async middleware end')
-}
-
-// app.get('/user',(req,res,next)=>{
-//   console.log('user route start')
-// 	res.end('get /user')
-//   console.log('user route end')
-// })
-
-// app.post('/user',(req,res,next)=>{
-//   console.log('user route start')
-// 	res.end('post /user')
-//   console.log('user route end')
-// })
-
-app.use(requestTime)
-app.use(logger)
-app.use(asyncMiddleware)
+// const asyncMiddleware = async (req, res, next) => {
+//   console.log('async middleware start')
+//   await axios.get('https://www.baidu.com')
+//   next()
+//   console.log('async middleware end')
+// }
 
 app.get('/user',(req,res,next)=>{
-  console.log('user route start', res.sync)
+  console.log('user route start')
 	res.end('get /user')
   console.log('user route end')
 })
 
 app.post('/user',(req,res,next)=>{
-  console.log('user route start', res.sync)
+  console.log('user route start')
 	res.end('post /user')
   console.log('user route end')
 })
 
-app.listen(3088)
+app.use(requestTime)
+app.use(logger)
+// app.use(asyncMiddleware)
+
+// app.get('/user',(req,res,next)=>{
+//   console.log('user route start', res.sync)
+// 	res.end('get /user')
+//   console.log('user route end')
+// })
+
+// app.post('/user',(req,res,next)=>{
+//   console.log('user route start', res.sync)
+// 	res.end('post /user')
+//   console.log('user route end')
+// })
+
+console.log(app.middlewares, 'app.middlewares')
+
+app.listen(30889)

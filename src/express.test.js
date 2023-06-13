@@ -17,23 +17,23 @@ const logger = (res, req, next) => {
   console.log('second middleware end', res.log)
 }
 
+app.get('/user', (req, res, next) => {
+  console.log('user route start')
+  res.end('get /user')
+  console.log('user route end')
+})
+
+app.post('/user', (req, res, next) => {
+  console.log('user route start')
+  res.end('post /user')
+  console.log('user route end')
+})
+
 // 使用中间件
 app.use(requestTime)
 app.use(logger)
 
-app.get('/user',(req,res,next)=>{
-  console.log('user route start')
-	res.end('get /user')
-  console.log('user route end')
-})
-
-app.post('/user',(req,res,next)=>{
-  console.log('user route start')
-	res.end('post /user')
-  console.log('user route end')
-})
-
 // 启动
-app.listen(3000, () => {
+app.listen(30888, () => {
   console.log('--start--')
 })

@@ -80,8 +80,11 @@ function express() {
         // 如果当前中间件的 path 和 method 和 income 的一致，表示是路由中间件
         // 这两种情况都执行
         // 否则跳过当前中间件
-        if(path === null || (path === income_path && method === income_method)) 
+        if(path === null || (path === income_path && method === income_method)) {
+          console.log(fn.toString())
           fn(req, res, next)
+        }
+          
         else 
           next() // 跳过当前中间件
       } 
@@ -94,6 +97,7 @@ function express() {
 
   function listen(port, fn) {
     http.createServer((req, res) => {
+      console.log('createServer')
       handle(req, res, () => {
         res.end('404') // 洋葱最里面的代表没有匹配到路由
       })
@@ -102,6 +106,7 @@ function express() {
     })
   }
 
+  app.middlewares = middlewares
   app.use = use
   app.listen = listen
 
